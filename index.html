@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Facebook Login</title>
   <script src="js/cookie.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 </head>
 <body>
-  <h1>Facebook Login Front-end Example</h1>
   <script>
     window.fbAsyncInit = function() {
       FB.init({
@@ -24,9 +24,49 @@
        var js, fjs = d.getElementsByTagName(s)[0];
        if (d.getElementById(id)) {return;}
        js = d.createElement(s); js.id = id;
-       js.src = "//connect.facebook.net/en_US/sdk.js";
+       js.src = "//connect.facebook.net/en_US/sdk.js"; // 현재 프로토콜에서
        fjs.parentNode.insertBefore(js, fjs);
      }(document, 'script', 'facebook-jssdk'));
+  </script>
+
+  <h1>Facebook Login Front-end Example</h1>
+  <button id="btn-facebook-login" class="btn btn-primary btn-block" onclick="fbLogin()">Facebook Login</button>
+
+  <script>
+    var hasToken == cookieHasToken();
+    if(!hasToken){
+      document.getElementById('btn-facebook-login').style.display = 'block';
+    }else{
+      document.getElementById('btn-facebook-login').style.display = 'none';
+    }
+
+    function fbLogin(){
+      // 페이스북 버튼을 누른 순간, 브라우저에 페이스북 로그인 여부 검색
+      FB.getLoginStatus(function(response){
+        if(response.status == 'connected'){
+          backendFacebookLogin(response.authResponse);
+        }else{
+          FB.login(function(response){
+            backendFacebookLogin(response.authResponse);
+          }, {scope: 'publick_profile'});
+        }
+      });
+    }
+
+    function backendFacebookLogin(authResponse){
+      // 페이스북 로그인을 통해 얻은 authResponse객체를 이용해
+      // 백엔드의 페이스북 로그인 API를 사용
+      console.log(authResponse);
+    }
+
+    function cookieHasToken(){
+      // 'token'이라는 키에 해당하는 cookie가 있는지 검사 결과 리턴
+      var token = getCookie('token');
+      if (token == undefined || token == null || token == ''){
+        return false;
+      }
+      return true;
+    }
   </script>
 </body>
 </html>
